@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Сборщик логов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Журнал логов</h1>
+    <form action="/add_log" method="post">
+        <label for="log_level">Уровень лога:</label>
+        <input type="text" id="log_level" name="log_level" required>
+        <label for="message">Сообщение:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Добавить лог</button>
+    </form>
+    <hr>
+    <form action="/filter_logs" method="get">
+        <label for="log_level_filter">Фильтровать по уровню:</label>
+        <select id="log_level_filter" name="log_level">
+            <option value="">Все уровни</option>
+            <option value="ERROR">Error</option>
+            <option value="WARNING">Warning</option>
+            <option value="INFO">Info</option>
+        </select>
+        <label for="start_date">Начальная дата:</label>
+        <input type="date" id="start_date" name="start_date">
+        <label for="end_date">Конечная дата:</label>
+        <input type="date" id="end_date" name="end_date">
+        <button type="submit">Фильтровать логи</button>
+    </form>
+    <form action="/archive_logs" method="post" style="text-align: center; margin-top: 20px;">
+        <button type="submit" style="background: #f44336;">Архивировать старые логи</button>
+    </form>    
+    <table>
+        <tr>
+            <th>Номер</th>
+            <th>Время</th>
+            <th>Уровень лога</th>
+            <th>Сообщение</th>
+            <th>Действие</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log[0] }}</td>
+            <td>{{ log[1] }}</td>
+            <td>{{ log[2] }}</td>
+            <td>{{ log[3] }}</td>
+            <td>
+                <form action="{{ url_for('delete_log', log_id=log[0]) }}" method="post" style="display:inline;">
+                    <button type="submit" style="background: #f44336;">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
